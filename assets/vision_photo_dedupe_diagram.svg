@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="420" viewBox="0 0 920 420" font-family="SF Mono, Menlo, monospace">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#8ab4f8"/>
+    </marker>
+    <style>
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #30363d; stroke-width: 1.5; rx: 10; }
+      .title { fill: #e6edf3; font-size: 15px; font-weight: 600; }
+      .sub { fill: #8b949e; font-size: 11.5px; }
+      .flow { fill: none; stroke: #8ab4f8; stroke-width: 1.6; marker-end: url(#arrow); }
+      .label { fill: #8ab4f8; font-size: 10.5px; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="920" height="420"/>
+
+  <text class="title" x="460" y="32" text-anchor="middle">VisionPhotoDedupe — on-device duplicate &amp; similar detection</text>
+
+  <!-- Inputs -->
+  <rect class="box" x="30" y="80" width="180" height="70"/>
+  <text class="title" x="120" y="108" text-anchor="middle">CGImage</text>
+  <text class="sub" x="120" y="128" text-anchor="middle">PhotoKit / files</text>
+
+  <rect class="box" x="30" y="230" width="180" height="70"/>
+  <text class="title" x="120" y="258" text-anchor="middle">AVAsset</text>
+  <text class="sub" x="120" y="278" text-anchor="middle">8 keyframes</text>
+
+  <!-- Photo pipeline -->
+  <rect class="box" x="270" y="60" width="230" height="110"/>
+  <text class="title" x="385" y="88" text-anchor="middle">FeaturePrintIndexer</text>
+  <text class="sub" x="385" y="108" text-anchor="middle">VNGenerateImageFeaturePrintRequest</text>
+  <text class="sub" x="385" y="126" text-anchor="middle">blur score (CIEdges @96px)</text>
+  <text class="sub" x="385" y="144" text-anchor="middle">revision + quality versioning</text>
+
+  <rect class="box" x="560" y="60" width="320" height="110"/>
+  <text class="title" x="720" y="86" text-anchor="middle">Match + Cluster</text>
+  <text class="sub" x="720" y="106" text-anchor="middle">computeDistance ≤ 0.08 dup / ≤ 0.40 similar</text>
+  <text class="sub" x="720" y="124" text-anchor="middle">chronological burst window</text>
+  <text class="sub" x="720" y="142" text-anchor="middle">union-find → medoid refine (≤40)</text>
+  <text class="sub" x="720" y="160" text-anchor="middle">incremental neighbor merge</text>
+
+  <!-- Video pipeline -->
+  <rect class="box" x="270" y="230" width="230" height="70"/>
+  <text class="title" x="385" y="258" text-anchor="middle">VideoKeyframeExtractor</text>
+  <text class="sub" x="385" y="278" text-anchor="middle">prints @ 0.10…0.95, 300px</text>
+
+  <rect class="box" x="560" y="230" width="320" height="70"/>
+  <text class="title" x="720" y="258" text-anchor="middle">VideoGrouping</text>
+  <text class="sub" x="720" y="278" text-anchor="middle">dup: max ≤ 0.08, avg ≤ 0.04 · sim: avg ≤ 0.52</text>
+
+  <!-- Outputs -->
+  <rect class="box" x="360" y="340" width="230" height="52"/>
+  <text class="title" x="475" y="364" text-anchor="middle">VisionGroupingResult</text>
+  <text class="sub" x="475" y="382" text-anchor="middle">similar + duplicate clusters</text>
+
+  <rect class="box" x="640" y="340" width="240" height="52"/>
+  <text class="title" x="760" y="364" text-anchor="middle">DiskStateCodec</text>
+  <text class="sub" x="760" y="382" text-anchor="middle">JSON · revision / threshold validated</text>
+
+  <!-- Flows -->
+  <path class="flow" d="M210 115 H265"/>
+  <path class="flow" d="M210 265 H265"/>
+  <path class="flow" d="M500 115 H555"/>
+  <path class="flow" d="M500 265 H555"/>
+  <path class="flow" d="M585 170 V320 H475 V336"/>
+  <path class="flow" d="M720 300 V330 H560 V336"/>
+  <path class="flow" d="M880 115 H898 V366 H882"/>
+  <path class="flow" d="M590 366 H635"/>
+</svg>
