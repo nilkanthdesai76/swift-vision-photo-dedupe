@@ -66,6 +66,14 @@ final class SimilarGroupingTests: XCTestCase {
         return context.makeImage()!
     }
 
+    private func requireVisionSupported() throws {
+        let sample = makeSolidImage(red: 0.5, green: 0.5, blue: 0.5)
+        try XCTSkipIf(
+            FeaturePrintIndexer.computeFeaturePrint(for: sample) == nil,
+            "VNGenerateImageFeaturePrintRequest is unavailable in this environment (e.g. headless CI VM without Metal inference context)."
+        )
+    }
+
     private func index(_ indexer: FeaturePrintIndexer, _ pairs: [(String, CGImage)]) async {
         for (id, image) in pairs {
             await indexer.index(cgImage: image, for: id)
@@ -74,7 +82,8 @@ final class SimilarGroupingTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testIdenticalImagesGroupAsDuplicates() async {
+    func testIdenticalImagesGroupAsDuplicates() async throws {
+        try requireVisionSupported()
         let indexer = FeaturePrintIndexer()
         let photoA = makeSolidImage(red: 0.9, green: 0.2, blue: 0.2)
         let photoB = makeSolidImage(red: 0.1, green: 0.2, blue: 0.9)
@@ -106,7 +115,8 @@ final class SimilarGroupingTests: XCTestCase {
         XCTAssertEqual(similarIDs, ["a", "a-copy"])
     }
 
-    func testDistinctImagesDoNotGroup() async {
+    func testDistinctImagesDoNotGroup() async throws {
+        try requireVisionSupported()
         let indexer = FeaturePrintIndexer()
         await index(indexer, [
             ("red", makeSolidImage(red: 1, green: 0, blue: 0)),
@@ -128,7 +138,8 @@ final class SimilarGroupingTests: XCTestCase {
         XCTAssertTrue(result.duplicates.isEmpty)
     }
 
-    func testProgressEndsAtCompleteResult() async {
+    func testProgressEndsAtCompleteResult() async throws {
+        try requireVisionSupported()
         let indexer = FeaturePrintIndexer()
         await index(indexer, [
             ("a", makeSolidImage(red: 0.9, green: 0.2, blue: 0.2)),
@@ -157,7 +168,8 @@ final class SimilarGroupingTests: XCTestCase {
         XCTAssertEqual(box.finalResult?.duplicates.count, 1)
     }
 
-    func testIncrementalMergeAttachesNewDuplicate() async {
+    func testIncrementalMergeAttachesNewDuplicate() async throws {
+        try requireVisionSupported()
         let indexer = FeaturePrintIndexer()
         let original = makeSolidImage(red: 0.2, green: 0.9, blue: 0.4)
 
@@ -189,7 +201,8 @@ final class SimilarGroupingTests: XCTestCase {
         XCTAssertEqual(memberIDs, ["a", "b", "c"])
     }
 
-    func testCachedGroupsInvalidAfterReset() async {
+    func testCachedGroupsInvalidAfterReset() async throws {
+        try requireVisionSupported()
         let indexer = FeaturePrintIndexer()
         let original = makeSolidImage(red: 0.2, green: 0.4, blue: 0.9)
         await index(indexer, [("a", original), ("b", original)])
