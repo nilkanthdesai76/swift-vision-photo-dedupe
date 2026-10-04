@@ -226,9 +226,8 @@ final class SimilarGroupingTests: XCTestCase {
     func testBlurryPhotoIDsUseThreshold() async {
         let indexer = FeaturePrintIndexer()
         // Feed blur scores directly (bypassing image rendering).
-        let sharp = FeaturePrintIndexer.computeFeaturePrint(for: makeCheckerImage())!
-        await indexer.index(featurePrint: sharp, blurScore: 0.30, for: "sharp")
-        await indexer.index(featurePrint: sharp, blurScore: 0.10, for: "blurry")
+        await indexer.setBlurScore(0.30, for: "sharp")
+        await indexer.setBlurScore(0.10, for: "blurry")
 
         let blurry = await indexer.blurryPhotoIDs()
         XCTAssertEqual(blurry.map(\.identifier), ["blurry"])

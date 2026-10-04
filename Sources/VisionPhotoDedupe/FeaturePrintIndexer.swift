@@ -74,15 +74,22 @@ public actor FeaturePrintIndexer {
 
     /// Stores a pre-computed feature print (and optional blur score) for an ID.
     public func index(
-        featurePrint: VNFeaturePrintObservation,
+        featurePrint: VNFeaturePrintObservation?,
         blurScore: Float? = nil,
         for id: String
     ) {
-        entries[id] = try? NSKeyedArchiver.archivedData(withRootObject: featurePrint, requiringSecureCoding: true)
-        liveObservations[id] = featurePrint
+        if let featurePrint {
+            entries[id] = try? NSKeyedArchiver.archivedData(withRootObject: featurePrint, requiringSecureCoding: true)
+            liveObservations[id] = featurePrint
+        }
         if let blurScore {
             blurScores[id] = blurScore
         }
+    }
+
+    /// Explicitly updates or sets the blur score for an asset ID.
+    public func setBlurScore(_ blurScore: Float, for id: String) {
+        blurScores[id] = blurScore
     }
 
     /// Computes and stores the feature print (and optionally the blur score)
